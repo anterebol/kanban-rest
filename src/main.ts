@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './exceptions/all-exceptions.filter';
 import { LogService } from './logger/logger.service';
 import { LoggingInterceptor } from './logger/logging.interceptor';
+import cors from 'cors';
 
 const USE_FASTIFY = JSON.parse(process.env.USE_FASTIFY as string);
 const LOG_CONSOLE = JSON.parse(process.env.LOG_CONSOLE as string);
@@ -20,6 +21,9 @@ async function _initApp(isFastify: boolean, isLogger: boolean) {
     return app;
   }
   const app = await NestFactory.create(AppModule, { logger: isLogger ? ['verbose'] : false });
+  app.use(cors({
+    origin: "*"
+  }))
   return app;
 }
 
@@ -40,7 +44,6 @@ async function bootstrap() {
 
   // Validation Pipeline settings
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
-
   const PORT = app.get(ConfigService).get<number>('PORT') as number;
 
   // Swagger settings
@@ -64,9 +67,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/docs', app, document);
-
   await app.listen(PORT, '0.0.0.0');
-
+  
   process.on('unhandledRejection', () => {
     logger.error({ msg: 'unhandledRejection event' });
     process.exit(1);

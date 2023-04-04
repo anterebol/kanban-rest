@@ -80,7 +80,8 @@
     "swagger-ui-express": "^4.3.0",
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8",
-    "typeorm": "^0.2.41"
+    "typeorm": "^0.2.41",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.2.0",
